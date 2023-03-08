@@ -1,4 +1,4 @@
-import {getKeyWord, getSubjects, getTextOfFile, readDocxFile} from "./src/docxService.js";
+import {getKeyWords, getSubjects, getTextOfFile, getTitles, readDocxFile} from "./src/docxService.js";
 
 async function GenerateCer(event) {
     event.preventDefault()
@@ -11,11 +11,10 @@ async function GenerateCer(event) {
 
         const docxFileInJson = await readDocxFile(input.files[0]);
         const fileContent = getTextOfFile(docxFileInJson);
-        const keyWord = getKeyWord(fileContent)
+        const keyWords = getKeyWords(fileContent)
         const subjects = getSubjects(fileContent);
-        //console.log(fileContent)
-        console.log(subjects)
-        console.log(keyWord)
+        const titles = getTitles(fileContent)
+        console.log(titles)
         /*
 
         if (subjects.length){

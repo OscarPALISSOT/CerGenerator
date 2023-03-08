@@ -69,7 +69,7 @@ export function getSubjects(fileContent) {
     }
 }
 
-export function getKeyWord(fileContent){
+export function getKeyWords(fileContent){
     const regex = /(Mots-clés:|Mots-clés :|Mots-clés)(.+?)\n\n/gs;
     let match;
     while ((match = regex.exec(fileContent)) !== null) {
@@ -77,6 +77,12 @@ export function getKeyWord(fileContent){
         keyword.shift()
         return keyword
     }
+}
+
+export function getTitles(fileContent){
+    const regex = /\n\n(.+?)\n/gs;
+    const matches = fileContent.match(regex);
+    return matches.map((match) => match.trim());
 }
 
 export function addParagraph() {
