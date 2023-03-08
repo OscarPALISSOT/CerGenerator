@@ -85,8 +85,19 @@ export function getTitles(fileContent){
     return matches.map((match) => match.trim());
 }
 
-export function addParagraph() {
-    console.log('test')
+function addParagraph(title, text) {
+    return new docx.Paragraph({
+        text: title,
+        heading: HeadingLevel.HEADING_2,
+        alignment: AlignmentType.CENTER,
+        break: 1,
+        children: [
+            new docx.TextRun({
+                text: text,
+                break: 1,
+            }),
+        ]
+    })
 }
 
 export function generateDocx() {
@@ -95,24 +106,7 @@ export function generateDocx() {
             {
                 properties: {},
                 children: [
-                    new docx.Paragraph({
-                        text: "To whom it may concern:",
-                        heading: HeadingLevel.HEADING_2,
-                        alignment: AlignmentType.CENTER,
-                        break: 1,
-                        children: [
-                            new docx.TextRun("Hello World"),
-                            new docx.TextRun({
-                                text: "Foo Bar",
-                                bold: true,
-                                break: 1,
-                            }),
-                            new docx.TextRun({
-                                text: "\tGithub is the best",
-                                bold: true
-                            })
-                        ]
-                    })
+                    addParagraph('titre', "ici du text")
                 ]
             }
         ]
