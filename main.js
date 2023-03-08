@@ -1,3 +1,5 @@
+import {getKeyWord, getSubjects, getTextOfFile, readDocxFile} from "./src/docxService.js";
+
 async function GenerateCer(event) {
     event.preventDefault()
     const input = form.children[0]
@@ -6,10 +8,15 @@ async function GenerateCer(event) {
     } else {
         let htmlContent = ''
         container.innerHTML = '<p>En cours de traitement</p>'
-        /*
+
         const docxFileInJson = await readDocxFile(input.files[0]);
-        const fileContent = getTextOfFile(docxFileInJson)
+        const fileContent = getTextOfFile(docxFileInJson);
+        const keyWord = getKeyWord(fileContent)
         const subjects = getSubjects(fileContent);
+        //console.log(fileContent)
+        console.log(subjects)
+        console.log(keyWord)
+        /*
 
         if (subjects.length){
 
@@ -34,12 +41,6 @@ async function GenerateCer(event) {
         }
 
          */
-        fetch(import.meta.env.VITE_API_URL)
-            .then((response) => response.json())
-            .then((data) => {
-                htmlContent = data.message
-                container.innerHTML = htmlContent;
-            });
         form.reset()
 
     }

@@ -10,5 +10,9 @@
   },
   "devDependencies": {
     "vite": "^4.1.0"
+  },
+  "dependencies": {
+    "docx": "^7.8.2",
+    "file-saver": "^2.0.5"
   }
 }

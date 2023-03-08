@@ -1,9 +1,10 @@
-/*import JSZip from 'jszip';
+import JSZip from 'jszip';
 import {xmlToJson} from "./xmlToJson.js";
-import * as fs from 'fs';
-import { Document, Packer, Paragraph } from 'docx'*/
+import * as docx from 'docx'
+import { saveAs } from 'file-saver';
+import {AlignmentType, HeadingLevel} from "docx";
 
-async function readDocxFile(file) {
+export async function readDocxFile(file) {
     // Créer une instance de JSZip et extraire le contenu du fichier
     const zip = new JSZip();
     const docx = await zip.loadAsync(file);
@@ -19,7 +20,7 @@ async function readDocxFile(file) {
     return contentJson
 }
 
-function getTextOfFile(file){
+export function getTextOfFile(file){
     const paragraphs = file["w:document"]["w:body"]["w:p"];
     let text = "";
     for (let i = 0; i < paragraphs.length; i++) {
@@ -42,7 +43,7 @@ function getTextOfFile(file){
     return addLineBreaks(text);
 }
 
-function addLineBreaks(text) {
+export function addLineBreaks(text) {
     const lines = text.split('\n');
     let result = '';
     const regex = /:$/gm;
@@ -57,31 +58,64 @@ function addLineBreaks(text) {
     return result.trim();
 }
 
-function getSubjects(fileContent) {
-    const regex = /Recherches(.+?)Livrable/gs;
+export function getSubjects(fileContent) {
+    const regex = /(Recherches|Recherche)(.+?)Livrable/gs;
     let match;
     while ((match = regex.exec(fileContent)) !== null) {
-        return match[1].trim().split('\n')
+        const subjects = match[0].trim().split('\n')
+        subjects.shift()
+        subjects.pop()
+        return subjects
     }
 }
 
-function addParagraph(nomFichier, texte, callback) {
-    // Charger le fichier .docx
-    //const doc = new Document(fs.readFileSync(nomFichier));
-    const doc = new Document();
+export function getKeyWord(fileContent){
+    const regex = /(Mots-clés:|Mots-clés :|Mots-clés)(.+?)\n\n/gs;
+    let match;
+    while ((match = regex.exec(fileContent)) !== null) {
+        const keyword = match[0].trim().split('\n')
+        keyword.shift()
+        return keyword
+    }
+}
 
-    // Créer un nouveau paragraphe avec le texte fourni
-    const paragraph = new Paragraph(texte);
+export function addParagraph() {
+    console.log('test')
+}
 
-    // Ajouter le paragraphe au document
-    doc.addParagraph(paragraph);
+export function generateDocx() {
+    const doc = new docx.Document({
+        sections: [
+            {
+                properties: {},
+                children: [
+                    new docx.Paragraph({
+                        text: "To whom it may concern:",
+                        heading: HeadingLevel.HEADING_2,
+                        alignment: AlignmentType.CENTER,
+                        break: 1,
+                        children: [
+                            new docx.TextRun("Hello World"),
+                            new docx.TextRun({
+                                text: "Foo Bar",
+                                bold: true,
+                                break: 1,
+                            }),
+                            new docx.TextRun({
+                                text: "\tGithub is the best",
+                                bold: true
+                            })
+                        ]
+                    })
+                ]
+            }
+        ]
+    });
 
-    // Enregistrer les modifications dans le fichier .docx
-    Packer.toBuffer(doc).then(buffer => {
-        fs.writeFileSync(nomFichier, buffer);
-        callback('fini');
-    }).catch(err => {
-        callback(err);
+    docx.Packer.toBlob(doc).then((blob) => {
+        console.log(blob);
+        saveAs(blob, "example.docx");
+        console.log("Document created successfully");
     });
 }
 
