@@ -2,7 +2,6 @@ import JSZip from 'jszip';
 import {xmlToJson} from "./xmlToJson.js";
 import * as docx from 'docx'
 import { saveAs } from 'file-saver';
-import {AlignmentType, HeadingLevel} from "docx";
 
 export async function readDocxFile(file) {
     // Créer une instance de JSZip et extraire le contenu du fichier
@@ -70,7 +69,7 @@ export function getSubjects(fileContent) {
 }
 
 export function getKeyWords(fileContent){
-    const regex = /(Mots-clés:|Mots-clés :|Mots-clés)(.+?)\n\n/gs;
+    const regex = /(Mots-clés:|Mots-clés :|Mots-clés|Mots-clef:|Mots-clef :|Mots-clefs :|Mots-clefs:)(.+?)\n\n/gs;
     let match;
     while ((match = regex.exec(fileContent)) !== null) {
         const keyword = match[0].trim().split('\n')
@@ -88,8 +87,6 @@ export function getTitles(fileContent){
 function addParagraph(title, text) {
     return new docx.Paragraph({
         text: title,
-        heading: HeadingLevel.HEADING_2,
-        alignment: AlignmentType.CENTER,
         break: 1,
         children: [
             new docx.TextRun({
@@ -97,23 +94,26 @@ function addParagraph(title, text) {
                 break: 1,
             }),
         ]
-    })
+    });
 }
 
-export function generateDocx() {
+
+
+export function generateDocx(content) {
     const doc = new docx.Document({
         sections: [
             {
                 properties: {},
                 children: [
-                    addParagraph('titre', "ici du text")
+                    content[0].forEach((element, index) => addParagraph(content[0][index], content[1][index])),
                 ]
             }
         ]
     });
 
+    doc.addParagraph(new docx.Paragraph("Parameters"));
+
     docx.Packer.toBlob(doc).then((blob) => {
-        console.log(blob);
         saveAs(blob, "example.docx");
         console.log("Document created successfully");
     });

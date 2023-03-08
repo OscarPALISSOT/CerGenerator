@@ -1,4 +1,5 @@
 import {generateDocx, getKeyWords, getSubjects, getTextOfFile, getTitles, readDocxFile} from "./src/docxService.js";
+import {getWordExplanation} from "./src/openAi.js";
 
 async function GenerateCer(event) {
     event.preventDefault()
@@ -17,24 +18,24 @@ async function GenerateCer(event) {
 
         if (subjects.length){
 
-            /*
-
+            let explanations = [];
             for (let i = 0; i < subjects.length; i++){
-                console.log(await getWordExplanation(subjects[i]))
+                explanations.push(await getWordExplanation(subjects[i]))
                 htmlContent = '<p>' + (i + 1) + '/' + subjects.length + '</p>'
                 container.innerHTML = htmlContent;
             }
 
-             */
-
-            generateDocx()
+            let resources = [subjects, explanations];
+            console.log(resources);
+            generateDocx(resources)
+            htmlContent = '<p>Terminé</p>'
 
 
 
         }else {
             htmlContent = '<p>Pas de recherches trouvées</p>'
         }
-        container.innerHTML = ''
+        container.innerHTML = htmlContent
         form.reset()
 
     }

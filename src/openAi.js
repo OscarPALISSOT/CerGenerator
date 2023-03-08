@@ -1,5 +1,4 @@
-import { Configuration, OpenAIApi } from "Serve/src/openAi";
-
+import { Configuration, OpenAIApi } from "openai";
 export async function getWordExplanation(word) {
 
     const configuration = new Configuration({
@@ -14,7 +13,7 @@ export async function getWordExplanation(word) {
             model: "text-davinci-003",
             prompt: prompt,
             temperature: 0.6,
-            max_tokens: 2048,
+            max_tokens: 100,
         });
 
         const explanation = chat.data.choices[0].text.trim();
